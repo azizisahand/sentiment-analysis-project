@@ -1,28 +1,11 @@
 import pandas as pd
+import argparse
+import os
+from joblib import dump
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline, make_pipeline
-
-# Add this import at the top
-import argparse
-
-def load_and_validate_data(data_path: str) -> pd.DataFrame:
-    """
-    Loads data from a CSV and ensures it has the required columns.
-    """
-    df = pd.read_csv(data_path)
-    if not {"text", "label"}.issubset(df.columns):
-        raise ValueError("CSV must contain 'text' and 'label' columns")
-    return df
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--data", default="data/sentiments.csv")
-    parser.add_argument("--out", default="models/sentiment.joblib")
-
-    args: argparse.Namespace = parser.parse_args()
-    main(data_path=args.data, model_path=args.out)
 
 def split_data(
     df: pd.DataFrame,
@@ -53,11 +36,6 @@ def train_model(X_train: pd.Series, y_train: pd.Series) -> Pipeline:
     clf_pipeline.fit(X_train, y_train)
     return clf_pipeline
 
-# New imports
-import os
-from joblib import dump
-
-# New function
 def save_model(model: Pipeline, model_path: str) -> None:
     """
     Saves the trained model to a file.
@@ -79,3 +57,20 @@ def main(data_path: str, model_path: str) -> None:
     print(f"Test accuracy: {acc:.3f}")
 
     save_model(clf, model_path)
+
+def load_and_validate_data(data_path: str) -> pd.DataFrame:
+    """
+    Loads data from a CSV and ensures it has the required columns.
+    """
+    df = pd.read_csv(data_path)
+    if not {"text", "label"}.issubset(df.columns):
+        raise ValueError("CSV must contain 'text' and 'label' columns")
+    return df
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data", default="data/sentiments.csv")
+    parser.add_argument("--out", default="models/sentiment.joblib")
+
+    args: argparse.Namespace = parser.parse_args()
+    main(data_path=args.data, model_path=args.out)
