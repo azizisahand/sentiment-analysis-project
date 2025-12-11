@@ -1,5 +1,9 @@
 # Sentiment Analysis Pipeline
 
+## How it works
+
+This project trains a machine learning model on labeled text data to classify each sentence as positive or negative sentiment. 
+
 ## Setup
 
 ### Option 1: Python venv
